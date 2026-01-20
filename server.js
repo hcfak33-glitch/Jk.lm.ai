@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.static('.'));
 
 // আপনার এপিআই কি এখানে বসান
-const genAI = new GoogleGenerativeAI("এখানে_আপনার_পুরো_API_KEY_বসান");
+const genAI = new GoogleGenerativeAI("const genAI = new GoogleGenerativeAI");
 
 const model = genAI.getGenerativeModel({ 
     model: "gemini-1.5-flash",
