@@ -1,33 +1,10 @@
-import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
-import cors from "cors";
+// আপনার এআই লজিক এখানে থাকবে
+const systemInstruction = "তুমি একজন বন্ধুসুলভ AI। তুমি সব ভাষা জানো, কোডিং পারো এবং মানুষের আবেগ বুঝে গুছিয়ে কথা বলো।";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Static frontend serve
-app.use(express.static(__dirname));
-
-// Text Chat API
-app.post("/chat", (req, res) => {
-  const userMessage = req.body.message;
-  // ডেমো reply (এখানে পরে AI API call দিবো)
-  res.json({ reply: "AI বুঝেছে: " + userMessage });
-});
-
-// Image API
-app.post("/image", (req, res) => {
-  const prompt = req.body.prompt;
-  const imageUrl = "https://via.placeholder.com/250?text=" + encodeURIComponent(prompt);
-  res.json({ url: imageUrl });
-});
-
-// Server run
-app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
+app.post('/chat', async (req, res) => {
+    const userPrompt = req.body.prompt;
+    
+    // এখানে AI API কল হবে (যেমন Gemini API)
+    // উত্তর আসার পর সেটা ফ্রন্ট-এন্ডে পাঠানো হবে
+    res.json({ reply: "আপনার উত্তরের কোড এখানে জেনারেট হবে..." });
 });
