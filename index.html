@@ -2,33 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title> Jk.lm AI UI</title>
+  <title>LM Gemini AI</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <div class="container">
-    <h1>JK.LM AI🍌 </h1>
+    <h1>JK LM  AI ⏳ 🍌 </h1>
 
     <!-- Text Chat -->
     <div class="card">
       <h2>Text Chat</h2>
-      <textarea placeholder="Type your message..."></textarea>
-      <button>Send</button>
-      <div class="response">AI response will appear here...</div>
+      <textarea id="textInput" rows="4" placeholder="যে কোনো ভাষায় লিখুন..."></textarea>
+      <button onclick="sendText()">Send</button>
+      <div id="textReply" class="response"></div>
     </div>
 
     <!-- Image Generation -->
     <div class="card">
       <h2>Image Generation</h2>
-      <input type="text" placeholder="Describe your image" />
-      <button class="green">Generate Image</button>
-      <div class="image-box">
-        <p>Generated image will appear here</p>
-      </div>
+      <input id="imageInput" type="text" placeholder="Describe your image..." />
+      <button onclick="generateImage()" class="green">Generate Image</button>
+      <div id="imageResult" class="image-box"></div>
     </div>
 
-    <!-- Video Upload -->
+    <!-- Video Placeholder -->
     <div class="card">
       <h2>Video Upload</h2>
       <p class="coming">Coming soon...</p>
@@ -36,5 +34,6 @@
 
   </div>
 
+  <script src="script.js"></script>
 </body>
 </html>
