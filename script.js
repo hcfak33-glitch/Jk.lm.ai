@@ -1,20 +1,31 @@
-const sendBtn = document.querySelector('button'); // আপনার সেন্ড বাটন
-const chatInput = document.querySelector('textarea'); // ইনপুট বক্স
-const resultDiv = document.querySelector('.text-chat-response'); // যেখানে উত্তর দেখাবে
+const express = require('express');
+const app = express();
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-sendBtn.addEventListener('click', async () => {
-    const message = chatInput.value;
-    if (!message) return;
+app.use(express.json());
+app.use(express.static('.')); // HTML ফাইলগুলো দেখানোর জন্য
 
-    resultDiv.innerText = "AI চিন্তা করছে...";
+// এখানে আপনার Gemini API Key বসাতে হবে
+const genAI = new GoogleGenerativeAI("YOUR_API_KEY_HERE");
 
-    // সার্ভারের কাছে মেসেজ পাঠানো
-    const response = await fetch('/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: message })
-    });
-
-    const data = await response.json();
-    resultDiv.innerText = data.reply; // এআই-এর উত্তর দেখানো
+// AI এর জন্য সিস্টেম ইনস্ট্রাকশন (যা একে ফিলিংস এবং সব ভাষা শেখাবে)
+const model = genAI.getGenerativeModel({ 
+    model: "gemini-1.5-flash",
+    systemInstruction: "তুমি একজন বন্ধুসুলভ AI সহকারী। তুমি বাংলাসহ পৃথিবীর সব ভাষা জানো। তুমি কোডিং বিশেষজ্ঞ। ব্যবহারকারীর ইমোশন বুঝে তাকে গুছিয়ে এবং মিষ্টি ভাষায় উত্তর দেবে।"
 });
+
+app.post('/chat', async (req, res) => {
+    try {
+        const userPrompt = req.body.prompt;
+        const result = await model.generateContent(userPrompt);
+        const response = await result.response;
+        const text = response.text();
+        
+        res.json({ reply: text });
+    } catch (error) {
+        console.error(error);
+        res.json({ reply: "দুঃখিত, আমি এই মুহূর্তে কানেক্ট হতে পারছি না।" });
+    }
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));
