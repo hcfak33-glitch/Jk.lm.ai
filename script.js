@@ -1,28 +1,28 @@
-const express = require('express');
-const app = express();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+async function sendText() {
+    const input = document.getElementById('textInput');
+    const responseDiv = document.getElementById('textReply');
+    const message = input.value.trim();
 
-app.use(express.json());
-app.use(express.static('.'));
+    if (!message) return;
 
-// এই লাইনে শুধু আপনার API Key টি বসান (কোটেশনের ভেতরে)
-const genAI = new GoogleGenerativeAI("AIzaSyCW35bQijLrZyKUaR6C_n3wLqEocVhlr64");
+    responseDiv.innerText = "চিন্তা করছি...";
 
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    systemInstruction: "তুমি একজন বন্ধুসুলভ AI। তুমি সব ভাষা বোঝো, কোডিং পারো এবং ইমোশন দিয়ে গুছিয়ে কথা বলো।"
-});
-
-app.post('/chat', async (req, res) => {
     try {
-        const userPrompt = req.body.prompt;
-        const result = await model.generateContent(userPrompt);
-        const response = await result.response;
-        res.json({ reply: response.text() });
-    } catch (error) {
-        res.status(500).json({ reply: "সার্ভারে সমস্যা হচ্ছে।" });
-    }
-});
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: message })
+        });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Server is running!'));
+        const data = await response.json();
+        responseDiv.innerText = data.reply;
+
+        // কথা বলার ফিচার (Voice)
+        const utterance = new SpeechSynthesisUtterance(data.reply);
+        utterance.lang = 'bn-BD'; 
+        window.speechSynthesis.speak(utterance);
+
+    } catch (error) {
+        responseDiv.innerText = "Error: এআই-এর সাথে সংযোগ বিচ্ছিন্ন!";
+    }
+}
