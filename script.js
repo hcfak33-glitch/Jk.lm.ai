@@ -1,7 +1,7 @@
 async function sendText() {
   const text = document.getElementById("textInput").value;
 
-  const res = await fetch("http://localhost:3000/chat", {
+  const res = await fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: text })
@@ -14,7 +14,7 @@ async function sendText() {
 async function generateImage() {
   const prompt = document.getElementById("imageInput").value;
 
-  const res = await fetch("http://localhost:3000/image", {
+  const res = await fetch("/image", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt })
