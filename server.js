@@ -1,22 +1,29 @@
 import express from "express";
-import fetch from "node-fetch";
 import cors from "cors";
+import fetch from "node-fetch";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// এখানে AI-র API বসবে
+// ✅ Text AI API
 app.post("/chat", async (req, res) => {
-  const userText = req.body.message;
+  const userMessage = req.body.message;
 
-  // এখন শুধু ডেমো রিপ্লাই
-  // পরে Gemini / OpenAI বসানো হবে
-  res.json({
-    reply: "আমি বুঝেছি: " + userText
-  });
+  // ডেমো রিপ্লাই
+  // এখানে OpenAI / Gemini API call দিতে পারো
+  res.json({ reply: "AI বুঝেছে: " + userMessage });
+});
+
+// ✅ Image API (ডেমো)
+app.post("/image", async (req, res) => {
+  const prompt = req.body.prompt;
+
+  // ডেমো ইমেজ
+  const imageUrl = "https://via.placeholder.com/250?text=" + encodeURIComponent(prompt);
+  res.json({ url: imageUrl });
 });
 
 app.listen(3000, () => {
-  console.log("AI Server running on http://localhost:3000");
+  console.log("Server running on http://localhost:3000");
 });
