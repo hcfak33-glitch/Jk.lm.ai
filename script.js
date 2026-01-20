@@ -1,31 +1,28 @@
-const express = require('express');
-const app = express();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const sendBtn = document.querySelector('.send-button'); // আপনার CSS ক্লাস অনুযায়ী
+const chatInput = document.querySelector('textarea');
+const resultDiv = document.querySelector('.response-area'); // যেখানে উত্তর দেখাবে
 
-app.use(express.json());
-app.use(express.static('.')); // HTML ফাইলগুলো দেখানোর জন্য
+sendBtn.addEventListener('click', async () => {
+    const message = chatInput.value;
+    if (!message) return;
 
-// এখানে আপনার Gemini API Key বসাতে হবে
-const genAI = new GoogleGenerativeAI("YOUR_API_KEY_HERE");
+    resultDiv.innerText = "চিন্তা করছি...";
 
-// AI এর জন্য সিস্টেম ইনস্ট্রাকশন (যা একে ফিলিংস এবং সব ভাষা শেখাবে)
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    systemInstruction: "তুমি একজন বন্ধুসুলভ AI সহকারী। তুমি বাংলাসহ পৃথিবীর সব ভাষা জানো। তুমি কোডিং বিশেষজ্ঞ। ব্যবহারকারীর ইমোশন বুঝে তাকে গুছিয়ে এবং মিষ্টি ভাষায় উত্তর দেবে।"
-});
-
-app.post('/chat', async (req, res) => {
     try {
-        const userPrompt = req.body.prompt;
-        const result = await model.generateContent(userPrompt);
-        const response = await result.response;
-        const text = response.text();
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: message })
+        });
+
+        const data = await response.json();
+        resultDiv.innerText = data.reply;
         
-        res.json({ reply: text });
+        // উত্তরটি পড়ে শোনানোর জন্য (Text to Speech)
+        const speech = new SpeechSynthesisUtterance(data.reply);
+        window.speechSynthesis.speak(speech);
+
     } catch (error) {
-        console.error(error);
-        res.json({ reply: "দুঃখিত, আমি এই মুহূর্তে কানেক্ট হতে পারছি না।" });
+        resultDiv.innerText = "Error: সার্ভার কানেক্ট হচ্ছে না।";
     }
 });
-
-app.listen(3000, () => console.log('Server running on port 3000'));
