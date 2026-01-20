@@ -1,26 +1,20 @@
-async function sendText() {
-  const text = document.getElementById("textInput").value;
+const sendBtn = document.querySelector('button'); // আপনার সেন্ড বাটন
+const chatInput = document.querySelector('textarea'); // ইনপুট বক্স
+const resultDiv = document.querySelector('.text-chat-response'); // যেখানে উত্তর দেখাবে
 
-  const res = await fetch("/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text })
-  });
+sendBtn.addEventListener('click', async () => {
+    const message = chatInput.value;
+    if (!message) return;
 
-  const data = await res.json();
-  document.getElementById("textReply").innerText = data.reply;
-}
+    resultDiv.innerText = "AI চিন্তা করছে...";
 
-async function generateImage() {
-  const prompt = document.getElementById("imageInput").value;
+    // সার্ভারের কাছে মেসেজ পাঠানো
+    const response = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: message })
+    });
 
-  const res = await fetch("/image", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt })
-  });
-
-  const data = await res.json();
-  const imageBox = document.getElementById("imageResult");
-  imageBox.innerHTML = `<img src="${data.url}" width="250" />`;
-}
+    const data = await response.json();
+    resultDiv.innerText = data.reply; // এআই-এর উত্তর দেখানো
+});
