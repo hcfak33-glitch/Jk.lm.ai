@@ -33,9 +33,7 @@ input {
   border-radius: 5px;
 }
 
-textarea {
-  height: 80px;
-}
+textarea { height: 80px; }
 
 button {
   background: #3b82f6;
@@ -46,9 +44,7 @@ button {
   cursor: pointer;
 }
 
-button.green {
-  background: #22c55e;
-}
+button.green { background: #22c55e; }
 
 .response {
   margin-top: 10px;
@@ -60,12 +56,10 @@ button.green {
 
 .image-box {
   margin-top: 10px;
-  padding: 20px;
+  padding: 10px;
   background: #f8fafc;
-  text-align: center;
   border-radius: 5px;
+  text-align: center;
 }
 
-.coming {
-  color: gray;
-}
+.coming { color: gray; }
