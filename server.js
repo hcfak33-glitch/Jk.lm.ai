@@ -5,12 +5,12 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 app.use(express.json());
 app.use(express.static('.'));
 
-// এখানে আপনার আসল Gemini API Key বসাতে হবে
-const genAI = new GoogleGenerativeAI("YOUR_ACTUAL_API_KEY");
+// আপনার এপিআই কি এখানে বসান
+const genAI = new GoogleGenerativeAI("এখানে_আপনার_পুরো_API_KEY_বসান");
 
 const model = genAI.getGenerativeModel({ 
     model: "gemini-1.5-flash",
-    systemInstruction: "তুমি একজন বন্ধুসুলভ AI। তুমি সব ভাষা বোঝো এবং ইমোশন দিয়ে কথা বলো।"
+    systemInstruction: "তুমি একজন বন্ধুসুলভ AI সহকারী। তুমি বাংলাসহ সব ভাষা জানো। তুমি কোডিং বিশেষজ্ঞ এবং মানুষের অনুভূতি বুঝে খুব গুছিয়ে মিষ্টি ভাষায় কথা বলো।"
 });
 
 app.post('/chat', async (req, res) => {
@@ -20,8 +20,10 @@ app.post('/chat', async (req, res) => {
         const response = await result.response;
         res.json({ reply: response.text() });
     } catch (error) {
-        res.json({ reply: "সার্ভারে সমস্যা হচ্ছে।" });
+        console.error(error);
+        res.json({ reply: "সার্ভারে সমস্যা হচ্ছে, একটু পরে চেষ্টা করো।" });
     }
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
