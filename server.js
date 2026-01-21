@@ -1,29 +1,27 @@
 const express = require('express');
 const app = express();
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const port = 3000;
 
+// JSON পার্স করার জন্য মিডলওয়্যার
 app.use(express.json());
-app.use(express.static('.'));
 
-// এখানে আপনার নতুন এপিআই কি-টি বসান
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// CORS হ্যান্ডেল করার জন্য (যদি ক্রস-ডোমেইন ইস্যু হয়)
+const cors = require('cors');
+app.use(cors());
 
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    systemInstruction: "তুমি একজন বন্ধুসুলভ AI। তুমি সব ভাষা জানো, কোডিং বিশেষজ্ঞ এবং মানুষের অনুভূতি বুঝে মিষ্টি করে উত্তর দাও।"
+// /chat রুট হ্যান্ডেল
+app.post('/chat', (req, res) => {
+    const { prompt } = req.body;
+    console.log('Received prompt:', prompt);
+
+    // এখানে আপনার AI লজিক যোগ করুন (যেমন Grok API কল)
+    // উদাহরণস্বরূপ, সিম্পল রেসপন্স
+    const reply = `আপনি বলেছেন: "${prompt}". এটি একটি টেস্ট রেসপন্স!`;
+
+    res.json({ reply });
 });
 
-app.post('/chat', async (req, res) => {
-    try {
-        const userPrompt = req.body.prompt;
-        const result = await model.generateContent(userPrompt);
-        const response = await result.response;
-        res.json({ reply: response.text() });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ reply: "সার্ভারে সমস্যা হচ্ছে, একটু পরে চেষ্টা করুন।" });
-    }
+// সার্ভার স্টার্ট
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
