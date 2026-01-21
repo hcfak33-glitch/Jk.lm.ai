@@ -5,7 +5,8 @@ async function sendText() {
 
     if (!message) return;
 
-    responseDiv.innerText = "চিন্তা করছি...";
+    responseDiv.innerText = "এআই চিন্তা করছে...";
+    input.value = ""; 
 
     try {
         const response = await fetch('/chat', {
@@ -17,12 +18,12 @@ async function sendText() {
         const data = await response.json();
         responseDiv.innerText = data.reply;
 
-        // কথা বলার ফিচার (Voice)
-        const utterance = new SpeechSynthesisUtterance(data.reply);
-        utterance.lang = 'bn-BD'; 
-        window.speechSynthesis.speak(utterance);
+        // আপনার চাওয়া অনুযায়ী এআই উত্তরটি পড়ে শোনাবে (Voice)
+        const speech = new SpeechSynthesisUtterance(data.reply);
+        speech.lang = 'bn-BD'; 
+        window.speechSynthesis.speak(speech);
 
     } catch (error) {
-        responseDiv.innerText = "Error: এআই-এর সাথে সংযোগ বিচ্ছিন্ন!";
+        responseDiv.innerText = "Error: সংযোগ বিচ্ছিন্ন!";
     }
 }
