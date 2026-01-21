@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.static('.'));
 
 // এখানে আপনার নতুন এপিআই কি-টি বসান
-const genAI = new GoogleGenerativeAI("আপনার_নতুন_এপিআই_কি_এখানে");
+const genAI = new GoogleGenerativeAI("AIzaSyCjZLGrai3Zbp7t1Lqw5gq7QD5g_gTUPHU");
 
 const model = genAI.getGenerativeModel({ 
     model: "gemini-1.5-flash",
