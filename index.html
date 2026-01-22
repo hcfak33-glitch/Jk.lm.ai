@@ -1,96 +1,149 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<title>JK LM AI</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JK lm ai</title>
+
 <style>
-body {
-  font-family: sans-serif;
-  background: #f4f4f4;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  background:#f5f5f5;
 }
-#chat {
-  max-width: 400px;
-  margin: 20px auto;
-  background: white;
-  padding: 10px;
-  height: 400px;
-  overflow-y: auto;
-  border-radius: 8px;
+
+/* Header */
+.header{
+  height:56px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 14px;
+  box-shadow:0 1px 4px rgba(0,0,0,.1);
 }
-.msg {
-  padding: 8px 12px;
-  margin: 5px;
-  border-radius: 15px;
-  max-width: 80%;
+.header h1{
+  font-size:20px;
+  margin:0;
 }
-.user {
-  background: #d1e7ff;
-  margin-left: auto;
+.avatar{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:#2e7d32;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
 }
-.ai {
-  background: #eee;
+
+/* Chat area */
+#chat{
+  height:calc(100vh - 120px);
+  padding:12px;
+  overflow-y:auto;
 }
-#inputBox {
-  max-width: 400px;
-  margin: auto;
-  display: flex;
+
+.msg{
+  max-width:80%;
+  padding:10px 14px;
+  margin:6px 0;
+  border-radius:16px;
+  font-size:15px;
 }
-input {
-  flex: 1;
-  padding: 10px;
+.user{
+  background:#d1e7ff;
+  margin-left:auto;
 }
-button {
-  padding: 10px;
+.ai{
+  background:#fff;
+  border:1px solid #eee;
+}
+
+/* Input area */
+.input-box{
+  height:64px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  padding:8px;
+  gap:6px;
+  box-shadow:0 -1px 4px rgba(0,0,0,.1);
+}
+.input-box input{
+  flex:1;
+  border:none;
+  outline:none;
+  padding:10px;
+  font-size:15px;
+  border-radius:20px;
+  background:#f1f1f1;
+}
+.input-box button{
+  border:none;
+  background:#2e7d32;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:50%;
+  font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- Header -->
+<div class="header">
+  <div>☰</div>
+  <h1>Jk lm ai 🍌</h1>
+  <div class="avatar">Jk</div>
+</div>
+
+<!-- Chat -->
 <div id="chat"></div>
 
-<div id="inputBox">
-  <input id="textInput" placeholder="মেসেজ লিখুন..." />
-  <button onclick="sendMessage()">Send</button>
+<!-- Input -->
+<div class="input-box">
+  <input id="textInput" placeholder="কি জানতে চান"/>
+  <button onclick="sendMessage()">➤</button>
 </div>
 
 <script>
-async function sendMessage() {
-  const input = document.getElementById("textInput");
-  const chat = document.getElementById("chat");
-  const message = input.value.trim();
-  if (!message) return;
+async function sendMessage(){
+  const input=document.getElementById("textInput");
+  const chat=document.getElementById("chat");
+  const message=input.value.trim();
+  if(!message) return;
 
-  // User message
-  const userDiv = document.createElement("div");
-  userDiv.className = "msg user";
-  userDiv.innerText = message;
-  chat.appendChild(userDiv);
+  // user msg
+  const u=document.createElement("div");
+  u.className="msg user";
+  u.innerText=message;
+  chat.appendChild(u);
 
-  // AI placeholder
-  const aiDiv = document.createElement("div");
-  aiDiv.className = "msg ai";
-  aiDiv.innerText = "🤖 চিন্তা করছে...";
-  chat.appendChild(aiDiv);
+  // ai msg
+  const a=document.createElement("div");
+  a.className="msg ai";
+  a.innerText="🤖 চিন্তা করছে...";
+  chat.appendChild(a);
 
-  input.value = "";
-  chat.scrollTop = chat.scrollHeight;
+  input.value="";
+  chat.scrollTop=chat.scrollHeight;
 
-  try {
-    const res = await fetch("https://jk-lm-ai.onrender.com/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: message })
+  try{
+    const res=await fetch("/chat",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({prompt:message})
     });
-
-    const data = await res.json();
-    aiDiv.innerText = data.reply || "কোনো উত্তর নেই";
-
-  } catch (err) {
-    aiDiv.innerText = "❌ সার্ভার সমস্যা";
+    const data=await res.json();
+    a.innerText=data.reply || "কোনো উত্তর নেই";
+  }catch(e){
+    a.innerText="❌ সার্ভার সমস্যা";
   }
-
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTop=chat.scrollHeight;
 }
 </script>
 
