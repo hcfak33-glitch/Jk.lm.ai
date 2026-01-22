@@ -1,83 +1,37 @@
-// ---------------- Send text ----------------
-async function sendText() {
-  const input = document.getElementById("textInput");
-  const chat = document.getElementById("textReply");
-  const message = input.value.trim();
-  if (!message) return;
+const express = require('express');
+const cors = require('cors');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-  // User bubble
-  const userDiv = document.createElement("div");
-  userDiv.className = "msg user";
-  userDiv.innerText = message;
-  chat.appendChild(userDiv);
-  chat.scrollTop = chat.scrollHeight;
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-  input.value = "";
+// আপনার দেওয়া Gemini API Key ব্যবহার করা হয়েছে
+const genAI = new GoogleGenerativeAI("AIzaSyBBUvnAfIpAMGxZzW6JxkQMq2Q-aMDsGGg");
 
-  // AI thinking bubble
-  const aiDiv = document.createElement("div");
-  aiDiv.className = "msg ai";
-  aiDiv.innerText = "🤖 এআই চিন্তা করছে...";
-  chat.appendChild(aiDiv);
-  chat.scrollTop = chat.scrollHeight;
+app.post('/chat', async (req, res) => {
+    try {
+        const { prompt } = req.body;
+        
+        // Gemini-1.5-flash মডেল ব্যবহার করা হচ্ছে যা দ্রুত এবং ফ্রি
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  try {
-    const res = await fetch("http://localhost:3000/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: message })
-    });
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
 
-    const data = await res.json();
-    const replyText = data.reply || "দুঃখিত, কোনো উত্তর পাওয়া যায়নি।";
-
-    aiDiv.innerText = replyText;
-
-    // Voice
-    if ("speechSynthesis" in window) {
-      speechSynthesis.cancel();
-      const speech = new SpeechSynthesisUtterance(replyText);
-      speech.lang = "bn-BD";
-      speechSynthesis.speak(speech);
+        // সফলভাবে উত্তর পাঠানো হচ্ছে
+        res.json({ reply: text });
+        
+    } catch (error) {
+        console.error("Error with Gemini API:", error);
+        // কোনো সমস্যা হলে রিপ্লাই পাঠানো
+        res.status(500).json({ reply: "দুঃখিত, আমি এই মুহূর্তে উত্তর দিতে পারছি না।" });
     }
-const res = await fetch("http://localhost:3000/chat", { 
-  method: "POST", 
-  headers: { "Content-Type": "application/json" }, 
-  body: JSON.stringify({ prompt: message }) 
 });
-  } catch (err) {
-    console.error(err);
-    aiDiv.innerText = "❌ সার্ভারের সাথে সংযোগ হয়নি";
-  }
 
-  chat.scrollTop = chat.scrollHeight;
-}
-
-// ---------------- Voice to Text ----------------
-const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-recognition.lang = "bn-BD";
-recognition.continuous = false;
-recognition.interimResults = false;
-
-function startMic() {
-  const mic = document.getElementById("micBtn");
-  mic.classList.add("listening");
-  recognition.start();
-}
-
-recognition.onresult = (event) => {
-  const voiceText = event.results[0][0].transcript;
-  document.getElementById("textInput").value = voiceText;
-  document.getElementById("micBtn").classList.remove("listening");
-};
-
-recognition.onend = () => {
-  document.getElementById("micBtn").classList.remove("listening");
-};
-
-recognition.onerror = () => {
-  document.getElementById("textReply").innerText =
-    "⚠️ Mic permission দিন অথবা Chrome ব্যবহার করুন";
-};
+// Render-এর জন্য Port সেটআপ
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`সার্ভার চলছে পোর্টে: ${PORT}`);
+});
