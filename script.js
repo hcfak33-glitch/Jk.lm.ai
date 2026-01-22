@@ -20,7 +20,7 @@ async function sendMessage() {
     chat.scrollTop = chat.scrollHeight;
 
     try {
-        // Render সার্ভারের লাইভ লিঙ্ক ব্যবহার করা হয়েছে
+        // আপনার Render লিঙ্কটি এখানে ব্যবহার করা হয়েছে
         const res = await fetch("https://jk-lm-ai.onrender.com/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
