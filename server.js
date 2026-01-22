@@ -7,7 +7,7 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
-const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE"; // ← এখানে তোমার API Key বসাও
+const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE"; // ← এখানে তোমার OpenAI API Key বসাও
 
 app.post("/chat", async (req, res) => {
   try {
