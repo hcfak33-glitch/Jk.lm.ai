@@ -25,3 +25,4 @@ app.post('/chat', (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+fetch("http://localhost:3000/chat", {
