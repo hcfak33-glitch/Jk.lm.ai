@@ -63,3 +63,25 @@ async function sendText() {
         }
     }
 }
+// 🎤 Voice to Text
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition;
+
+const recognition = new SpeechRecognition();
+recognition.lang = "bn-BD";
+recognition.continuous = false;
+recognition.interimResults = false;
+
+function startMic() {
+  recognition.start();
+}
+
+recognition.onresult = (event) => {
+  const voiceText = event.results[0][0].transcript;
+  document.getElementById("textInput").value = voiceText;
+};
+
+recognition.onerror = () => {
+  document.getElementById("textReply").innerText =
+    "⚠️ Mic permission দিন অথবা Chrome ব্যবহার করুন";
+};
