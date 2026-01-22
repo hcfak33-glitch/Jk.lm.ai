@@ -62,3 +62,21 @@ recognition.onerror = () => {
   document.getElementById("textReply").innerText =
     "⚠️ Mic permission দিন অথবা Chrome ব্যবহার করুন";
 };
+alert("JS loaded");
+
+function sendText() {
+  alert("Button clicked");
+
+  const input = document.getElementById("textInput");
+  const responseDiv = document.getElementById("textReply");
+
+  if (!input || !responseDiv) {
+    alert("HTML ID ভুল");
+    return;
+  }
+
+  const message = input.value.trim();
+  if (!message) return;
+
+  responseDiv.innerText = "🤖 কাজ করছে...";
+}
