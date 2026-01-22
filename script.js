@@ -1,37 +1,33 @@
-const express = require('express');
-const cors = require('cors');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+async function sendMessage() {
+    const input = document.getElementById("textInput");
+    const chat = document.getElementById("chat");
+    const message = input.value.trim();
+    if (!message) return;
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+    // ইউজার মেসেজ দেখানো
+    const userDiv = document.createElement("div");
+    userDiv.className = "msg user";
+    userDiv.innerText = message;
+    chat.appendChild(userDiv);
 
-// আপনার দেওয়া Gemini API Key ব্যবহার করা হয়েছে
-const genAI = new GoogleGenerativeAI("AIzaSyBBUvnAfIpAMGxZzW6JxkQMq2Q-aMDsGGg");
+    // AI মেসেজ বক্স তৈরি
+    const aiDiv = document.createElement("div");
+    aiDiv.className = "msg ai";
+    aiDiv.innerText = "অপেক্ষা করুন...";
+    chat.appendChild(aiDiv);
 
-app.post('/chat', async (req, res) => {
     try {
-        const { prompt } = req.body;
-        
-        // Gemini-1.5-flash মডেল ব্যবহার করা হচ্ছে যা দ্রুত এবং ফ্রি
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        // Render সার্ভারে রিকোয়েস্ট পাঠানো
+        const res = await fetch("https://jk-lm-ai.onrender.com/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: message })
+        });
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
+        const data = await res.json();
+        aiDiv.innerText = data.reply; // AI এর উত্তর এখানে আসবে
 
-        // সফলভাবে উত্তর পাঠানো হচ্ছে
-        res.json({ reply: text });
-        
-    } catch (error) {
-        console.error("Error with Gemini API:", error);
-        // কোনো সমস্যা হলে রিপ্লাই পাঠানো
-        res.status(500).json({ reply: "দুঃখিত, আমি এই মুহূর্তে উত্তর দিতে পারছি না।" });
+    } catch (err) {
+        aiDiv.innerText = "দুঃখিত, কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।";
     }
-});
-
-// Render-এর জন্য Port সেটআপ
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`সার্ভার চলছে পোর্টে: ${PORT}`);
-});
+}
