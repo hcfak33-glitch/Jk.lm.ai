@@ -85,3 +85,19 @@ recognition.onerror = () => {
   document.getElementById("textReply").innerText =
     "⚠️ Mic permission দিন অথবা Chrome ব্যবহার করুন";
 };
+function startMic() {
+  const mic = document.getElementById("micBtn");
+  mic.classList.add("listening");
+  recognition.start();
+}
+
+recognition.onresult = (event) => {
+  const voiceText = event.results[0][0].transcript;
+  document.getElementById("textInput").value = voiceText;
+
+  document.getElementById("micBtn").classList.remove("listening");
+};
+
+recognition.onend = () => {
+  document.getElementById("micBtn").classList.remove("listening");
+};
