@@ -141,7 +141,7 @@ async function sendMessage(){
     const data=await res.json();
     a.innerText=data.reply || "কোনো উত্তর নেই";
   }catch(e){
-    a.innerText="❌ সার্ভার সমস্যা";
+    a.innerText="localhost:3000";
   }
   chat.scrollTop=chat.scrollHeight;
 }
