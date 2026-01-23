@@ -73,7 +73,7 @@ body{
   box-shadow:0 -1px 4px rgba(0,0,0,.1);
 }
 .input-box input{
-  flex:1;
+  flex:1;দ
   border:none;
   outline:none;
   padding:10px;
@@ -111,40 +111,38 @@ body{
 </div>
 
 <script>
-async function sendMessage(){
-  const input=document.getElementById("textInput");
-  const chat=document.getElementById("chat");
-  const message=input.value.trim();
-  if(!message) return;
+  async function sendMessage() {
+    const messageInput = document.getElementById('textInput');
+    const message = messageInput.value.trim();
 
-  // user msg
-  const u=document.createElement("div");
-  u.className="msg user";
-  u.innerText=message;
-  chat.appendChild(u);
+    if (!message) return;
 
-  // ai msg
-  const a=document.createElement("div");
-  a.className="msg ai";
-  a.innerText="🤖 চিন্তা করছে...";
-  chat.appendChild(a);
+    // ইউজারের মেসেজ স্ক্রিনে দেখানোর ফাংশন (আপনার ফাইলে displayMessage নাম থাকলে সেটিই রাখুন)
+    displayMessage(message, 'user'); 
+    messageInput.value = '';
 
-  input.value="";
-  chat.scrollTop=chat.scrollHeight;
+    try {
+        // ব্যাকএন্ড কানেকশন
+        const response = await fetch('http://localhost:3000/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: message })
+        });
 
-  try{
-    const res=await fetch("/chat",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({prompt:message})
-    });
-    const data=await res.json();
-    a.innerText=data.reply || "কোনো উত্তর নেই";
-  }catch(e){
-    a.innerText="localhost:3000";
+        if (!response.ok) throw new Error('সার্ভার রেসপন্স করছে না');
+
+        const data = await response.json();
+        
+        // বটের রিপ্লাই দেখানো
+        displayMessage(data.reply, 'bot');
+
+    } catch (error) {
+        console.error('Error:', error);
+        displayMessage('সার্ভার সমস্যা: Termux কি চালু আছে?', 'bot');
+    }
   }
-  chat.scrollTop=chat.scrollHeight;
-}
 </script>
 
 </body>
