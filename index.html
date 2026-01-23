@@ -44,6 +44,8 @@ body{
   height:calc(100vh - 120px);
   padding:12px;
   overflow-y:auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .msg{
@@ -52,14 +54,17 @@ body{
   margin:6px 0;
   border-radius:16px;
   font-size:15px;
+  word-wrap: break-word;
 }
 .user{
   background:#d1e7ff;
   margin-left:auto;
+  align-self: flex-end;
 }
-.ai{
+.bot{
   background:#fff;
   border:1px solid #eee;
+  align-self: flex-start;
 }
 
 /* Input area */
@@ -73,7 +78,7 @@ body{
   box-shadow:0 -1px 4px rgba(0,0,0,.1);
 }
 .input-box input{
-  flex:1;দ
+  flex:1;
   border:none;
   outline:none;
   padding:10px;
@@ -88,41 +93,47 @@ body{
   padding:10px 14px;
   border-radius:50%;
   font-size:16px;
+  cursor: pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Header -->
 <div class="header">
   <div>☰</div>
   <h1>Jk lm ai 🍌</h1>
   <div class="avatar">Jk</div>
 </div>
 
-<!-- Chat -->
 <div id="chat"></div>
 
-<!-- Input -->
 <div class="input-box">
   <input id="textInput" placeholder="কি জানতে চান"/>
   <button onclick="sendMessage()">➤</button>
 </div>
 
 <script>
+  // মেসেজ স্ক্রিনে দেখানোর জন্য এই ফাংশনটি দরকার
+  function displayMessage(text, type) {
+    const chatContainer = document.getElementById('chat');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'msg ' + type;
+    messageDiv.innerText = text;
+    chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight; // অটো স্ক্রল ডাউন
+  }
+
   async function sendMessage() {
     const messageInput = document.getElementById('textInput');
     const message = messageInput.value.trim();
 
     if (!message) return;
 
-    // ইউজারের মেসেজ স্ক্রিনে দেখানোর ফাংশন (আপনার ফাইলে displayMessage নাম থাকলে সেটিই রাখুন)
     displayMessage(message, 'user'); 
     messageInput.value = '';
 
     try {
-        // ব্যাকএন্ড কানেকশন
         const response = await fetch('http://localhost:3000/chat', {
             method: 'POST',
             headers: {
@@ -131,11 +142,9 @@ body{
             body: JSON.stringify({ message: message })
         });
 
-        if (!response.ok) throw new Error('সার্ভার রেসপন্স করছে না');
+        if (!response.ok) throw new Error('Server not responding');
 
         const data = await response.json();
-        
-        // বটের রিপ্লাই দেখানো
         displayMessage(data.reply, 'bot');
 
     } catch (error) {
@@ -143,3 +152,14 @@ body{
         displayMessage('সার্ভার সমস্যা: Termux কি চালু আছে?', 'bot');
     }
   }
+
+  // এন্টার চাপলে মেসেজ পাঠানোর সুবিধা
+  document.getElementById('textInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+</script>
+
+</body>
+</html>
